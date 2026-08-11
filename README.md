@@ -5,6 +5,8 @@
 Camera Matching colour profiles for the **Sony A7RVI (ILCE-7RM6)** in Adobe
 Lightroom Classic, derived from the Sony RX1R III (DSC-RX1RM3) donor profiles.
 
+Based on [davrukin/Sony-A7V-Picture-Profile-Creator](https://github.com/davrukin/Sony-A7V-Picture-Profile-Creator)
+
 ## Licence
 
 The **Python script and documentation** in this repository are released under
