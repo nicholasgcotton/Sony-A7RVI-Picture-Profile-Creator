@@ -1,32 +1,32 @@
 #!/usr/bin/env python3
 """
-make_a7v_profiles.py
+make_A7RVI_profiles.py
 ====================
-Generates Sony A7V (ILCE-7M5) Camera Matching DCP profiles by transplanting
-the correct colour matrices from the A7V's Adobe Standard profile into each of
+Generates Sony A7RVI (ILCE-7RM6) Camera Matching DCP profiles by transplanting
+the correct colour matrices from the A7RVI's Adobe Standard profile into each of
 the 11 Sony RX1R III (DSC-RX1RM3) Camera Matching profiles.
 
-Profiles are written to ./output/Sony ILCE-7M5/ relative to this script so
+Profiles are written to ./output/Sony ILCE-7RM6/ relative to this script so
 that no elevated (sudo) permissions are needed.  After inspection, copy them
 to the system CameraRaw folder with the command printed at the end.
 
 Profile naming
 --------------
-Files and internal ProfileName tags get " (A7V)" appended, e.g.:
-  "Sony ILCE-7M5 Camera ST (A7V).dcp"   ProfileName = "Camera ST (A7V)"
+Files and internal ProfileName tags get " (A7RVI)" appended, e.g.:
+  "Sony ILCE-7RM6 Camera ST (A7RVI).dcp"   ProfileName = "Camera ST (A7RVI)"
 
 This means they appear as *separate* entries in Lightroom's Profile Browser
 (under Camera Matching) alongside any future native Sony / Adobe profiles for
-the A7V — they do NOT override anything.
+the A7RVI — they do NOT override anything.
 
 No third-party libraries required — stdlib only (struct, pathlib).
 
 macOS paths used
 -----------------
   Donor profiles : /Library/Application Support/Adobe/CameraRaw/CameraProfiles/Camera/Sony DSC-RX1RM3/
-  Colour source  : /Library/Application Support/Adobe/CameraRaw/CameraProfiles/Adobe Standard/Sony ILCE-7M5 Adobe Standard.dcp
-  System output  : /Library/Application Support/Adobe/CameraRaw/CameraProfiles/Camera/Sony ILCE-7M5/
-  Local output   : <script_dir>/output/Sony ILCE-7M5/   (written by default)
+  Colour source  : /Library/Application Support/Adobe/CameraRaw/CameraProfiles/Adobe Standard/Sony ILCE-7RM6 Adobe Standard.dcp
+  System output  : /Library/Application Support/Adobe/CameraRaw/CameraProfiles/Camera/Sony ILCE-7RM6/
+  Local output   : <script_dir>/output/Sony ILCE-7RM6/   (written by default)
 
 DCP / TIFF tag reference
 -------------------------
@@ -55,16 +55,16 @@ SCRIPT_DIR = Path(__file__).parent.resolve()
 
 BASE = Path("/Library/Application Support/Adobe/CameraRaw/CameraProfiles")
 DONOR_DIR  = BASE / "Camera" / "Sony DSC-RX1RM3"
-ADOBE_STD  = BASE / "Adobe Standard" / "Sony ILCE-7M5 Adobe Standard.dcp"
-SYSTEM_OUTPUT_DIR = BASE / "Camera" / "Sony ILCE-7M5"
+ADOBE_STD  = BASE / "Adobe Standard" / "Sony ILCE-7RM6 Adobe Standard.dcp"
+SYSTEM_OUTPUT_DIR = BASE / "Camera" / "Sony ILCE-7RM6"
 
 # Local output – no sudo required
-LOCAL_OUTPUT_DIR = SCRIPT_DIR / "output" / "Sony ILCE-7M5"
+LOCAL_OUTPUT_DIR = SCRIPT_DIR / "output" / "Sony ILCE-7RM6"
 
 # ---------------------------------------------------------------------------
 # Profile variant suffix (appended to filename stem and ProfileName tag)
 # ---------------------------------------------------------------------------
-VARIANT_SUFFIX = " (A7V)"
+VARIANT_SUFFIX = " (A7RVI)"
 
 # ---------------------------------------------------------------------------
 # ForwardMatrix: ProPhoto RGB -> XYZ D50  (canonical pass-through)
@@ -140,7 +140,7 @@ def _read_ifd(data: bytes, ifd_offset: int, endian: str) -> list:
 
 
 # ---------------------------------------------------------------------------
-# Extract ColorMatrix1/2 from the A7V Adobe Standard DCP
+# Extract ColorMatrix1/2 from the A7RVI Adobe Standard DCP
 # ---------------------------------------------------------------------------
 
 def extract_color_matrices(path: Path) -> dict:
@@ -155,7 +155,7 @@ def extract_color_matrices(path: Path) -> dict:
     missing = {TAG_COLOR_MATRIX_1, TAG_COLOR_MATRIX_2} - result.keys()
     if missing:
         raise RuntimeError(
-            f"Tags not found in A7V Adobe Standard: {[hex(t) for t in missing]}")
+            f"Tags not found in A7RVI Adobe Standard: {[hex(t) for t in missing]}")
     return result
 
 
@@ -262,13 +262,13 @@ def patch_dcp(src: Path, dst: Path, new_model: str,
 
 def main() -> None:
     print("=" * 62)
-    print("Sony A7V (ILCE-7M5) DCP Profile Generator")
+    print("Sony A7RVI (ILCE-7RM6) DCP Profile Generator")
     print("=" * 62)
 
     if not DONOR_DIR.is_dir():
         sys.exit(f"\nERROR: Donor directory not found:\n  {DONOR_DIR}")
     if not ADOBE_STD.is_file():
-        sys.exit(f"\nERROR: A7V Adobe Standard DCP not found:\n  {ADOBE_STD}")
+        sys.exit(f"\nERROR: A7RVI Adobe Standard DCP not found:\n  {ADOBE_STD}")
 
     donor_files = sorted(DONOR_DIR.glob("*.dcp"))
     if not donor_files:
@@ -291,12 +291,12 @@ def main() -> None:
 
     success = 0
     for src in donor_files:
-        # Filename: DSC-RX1RM3 -> ILCE-7M5, append variant suffix before .dcp
-        stem = src.stem.replace("DSC-RX1RM3", "ILCE-7M5")
+        # Filename: DSC-RX1RM3 -> ILCE-7RM6, append variant suffix before .dcp
+        stem = src.stem.replace("DSC-RX1RM3", "ILCE-7RM6")
         new_name = stem + VARIANT_SUFFIX + ".dcp"
         dst = LOCAL_OUTPUT_DIR / new_name
         try:
-            patch_dcp(src, dst, "ILCE-7M5", color_matrices, FORWARD_MATRIX,
+            patch_dcp(src, dst, "ILCE-7RM6", color_matrices, FORWARD_MATRIX,
                       VARIANT_SUFFIX)
             print(f"  OK  {src.name}")
             print(f"   -> {new_name}")
@@ -316,12 +316,12 @@ def main() -> None:
     print(f'  sudo chmod 644 "{SYSTEM_OUTPUT_DIR}"/*.dcp')
 
     print(f"\n--- Lightroom Classic import ---")
-    print(f"  1. Open an ILCE-7M5 raw file in Develop.")
+    print(f"  1. Open an ILCE-7RM6 raw file in Develop.")
     print(f"  2. Click the Profile box (top of Basic panel) -> Browse...")
     print(f"  3. Hamburger menu (=) -> Import Profiles.")
     print(f"  4. Navigate to:\n       {LOCAL_OUTPUT_DIR}")
     print(f"  5. Select all 11 .dcp files -> Import.")
-    print(f"  6. Profiles appear under Camera Matching as e.g. 'Camera ST (A7V)'.")
+    print(f"  6. Profiles appear under Camera Matching as e.g. 'Camera ST (A7RVI)'.")
     print(f"{'=' * 62}")
 
 
