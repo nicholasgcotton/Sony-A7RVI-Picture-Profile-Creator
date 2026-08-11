@@ -234,19 +234,6 @@ values in-place where possible:
 (illuminant D65 for CM2, standard illuminant A for CM1). This gives the A7RVI
 correct sensor characterisation for white-balance computation.
 
-### ColorMatrix values (from A7RVI Adobe Standard)
-
-```
-ColorMatrix1 (illuminant A ≈ 2856 K):
-  [ 1.1168, -0.6826,  0.0991,
-   -0.3276,  1.0617,  0.3080,
-   -0.0050,  0.0460,  0.7113 ]
-
-ColorMatrix2 (illuminant D65 ≈ 6504 K):
-  [ 0.9089, -0.3577, -0.0787,
-   -0.3563,  1.1326,  0.2557,
-   -0.0114,  0.0928,  0.5904 ]
-```
 
 ### ForwardMatrix: ProPhoto RGB → XYZ D50
 
